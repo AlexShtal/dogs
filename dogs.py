@@ -77,10 +77,10 @@ class Dog:
 
 
 """Создаем собачек"""
-with open('Имена собачек.txt', 'r') as f:
+with open('names.txt', 'r') as f:
     names = [str(i)[:-1] for i in f]
 
-with open('Породы.txt', 'r', encoding='utf-8') as f:
+with open('breeds.txt', 'r', encoding='utf-8') as f:
     breeds = [str(i)[:-1] for i in f]
 
 dogs = [Dog(name, randint(1, 20)) for name in sample(names, len(names))]
