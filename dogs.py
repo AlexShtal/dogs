@@ -1,90 +1,98 @@
+from __future__ import annotations
 from random import randint, sample
 
 
 class Dog:
-    """Создание собаки"""
-    global dogs
+    dogs = []
 
-    def __init__(self, name, age):
-        """Инициализация атрибутов"""
+    def __init__(self, name: str, age: int):
+        """Initializing"""
         moods = ['Good', 'Bad']
         self.name = name
         self.age = age
         self.mood = moods[randint(0, 1)]
 
-    def mood_set(self, mood):
-        """Смена настроения"""
+    def setMood(self, mood: str):
+        """Setter for mood"""
         self.mood = mood
 
-    def mood_get(self):
+    def getMood(self) -> str:
+        """Getter for mood"""
         return self.mood
 
-    def age_get(self):
+    def getAge(self) -> int:
+        """Getter for age"""
         return self.age
 
-    def name_get(self):
+    def getName(self) -> str:
+        """Getter for name"""
         return self.name
 
-    def talk(self, partner):
-        """Собачка разговаривает с другой собачкой"""
+    def isGood(self) -> bool:
+        return self.getMood() == "Good"
 
-        if self.mood == 'Good' and partner.mood == 'Good':
+    def talk(self, partner: Dog):
+        """Dogs interaction"""
+
+        if self.isGood() and partner.isGood():
             pass
-        if partner.mood == 'Bad' and self.mood == 'Bad' and randint(1, 100) > 45:
-            self.mood = 'Good'
-            partner.mood = 'Good'
-        if partner.mood == 'Bad' or self.mood == 'Bad' and randint(1, 100) > 55:
-            self.mood = 'Bad'
-            partner.mood = 'Bad'
+        if not partner.isGood() and not self.isGood() and randint(1, 100) > 45:
+            self.setMood('Good')
+            partner.setMood('Good')
+        if not partner.isGood() or not self.isGood() and randint(1, 100) > 55:
+            self.setMood('Bad')
+            partner.setMood('Bad')
+
 
     @staticmethod
-    def rand_dog():
+    def getRandomDog() -> list:
+        """Getter for random dog"""
         return dogs[randint(0, len(dogs) - 1)]
 
     @staticmethod
-    def dogs_mood_print():
-        """Выводит информацию о настроении всех собачек"""
-        cnt_good = 0
-        cnt_bad = 0
+    def printDogsMood():
+        """Printing gogs moods info"""
+        count_good = 0
+        count_bad = 0
 
         for i in dogs:
-            if i.mood_get() == 'Good':
-                cnt_good += 1
+            if i.getMood() == 'Good':
+                count_good += 1
             else:
-                cnt_bad += 1
+                count_bad += 1
         print(
-            'Количество веселых собачек: {0} ({1}%)'.format(
-                cnt_good, round((cnt_good * 100) / (cnt_good + cnt_bad), 2)
+            'Amount of happy dogs: {0} ({1}%)'.format(
+                count_good, round((count_good * 100) / (count_good + count_bad), 2)
             ) + '\n' +
-            'Количество грустных собачек: {0} ({1}%)'.format(cnt_bad, round((cnt_bad * 100) / (cnt_good + cnt_bad), 2))
+            'Amount of sad dogs: {0} ({1}%)'.format(count_bad, round((count_bad * 100) / (count_good + count_bad), 2))
         )
 
     @staticmethod
-    def dogs_mood():
-        """Возвращает информацию о настроении всех собачек"""
-        cnt_good = 0
-        cnt_bad = 0
+    def getDogsMood() -> dict:
+        """Getter for dogs mood"""
+        count_good = 0
+        count_bad = 0
 
         for i in dogs:
-            if i.mood_get() == 'Good':
-                cnt_good += 1
+            if i.getMood() == 'Good':
+                count_good += 1
             else:
-                cnt_bad += 1
+                count_bad += 1
         return {
-            'Good': cnt_good,
-            'Bad': cnt_bad
+            'Good': count_good,
+            'Bad': count_bad
         }
 
 
-"""Создаем собачек"""
-with open('names.txt', 'r') as f:
-    names = [str(i)[:-1] for i in f]
+"""Loading dogs names and ages"""
+with open('names.txt', 'r') as names_file:
+    names = [str(i)[:-1] for i in names_file]
 
-with open('breeds.txt', 'r', encoding='utf-8') as f:
-    breeds = [str(i)[:-1] for i in f]
+with open('breeds.txt', 'r', encoding='utf-8') as breeds_file:
+    breeds = [str(i)[:-1] for i in breeds_file]
 
-dogs = [Dog(name, randint(1, 20)) for name in sample(names, len(names))]
+"""Creating tuple with random dogs"""
+Dog.dogs = [Dog(name, randint(1, 20)) for name in sample(names, len(names))]
+Dog.dogs = tuple(Dog.dogs)
 
-dogs = tuple(dogs)
-
-"""Код для теста"""
+"""Testing code"""
