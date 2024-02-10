@@ -1,14 +1,12 @@
-from __future__ import annotations
 from random import randint, sample
 
 
 class Dog:
-    dogs = []
-
-    def __init__(self, name: str, age: int):
+    def __init__(self, name: str, breed: str, age: int):
         """Initializing"""
         moods = ['Good', 'Bad']
         self.name = name
+        self.breed = breed
         self.age = age
         self.mood = moods[randint(0, 1)]
 
@@ -31,32 +29,43 @@ class Dog:
     def isGood(self) -> bool:
         return self.getMood() == "Good"
 
-    def talk(self, partner: Dog):
+
+class DogsGroup:
+    def __init__(self, amount: int, names: list, breeds: list):
+        self.dogs_list = []
+
+        sampled_names = [names[randint(0, len(names) - 1)] for _ in range(amount)]
+        sampled_breeds = [breeds[randint(0, len(breeds) - 1)] for _ in range(amount)]
+
+        for i in range(amount):
+            self.dogs_list.append(Dog(sampled_names[i], sampled_breeds[i], randint(1, 20)))
+
+    def getList(self) -> list:
+        return self.dogs_list
+
+    def talks(self, number_of_dogs: int):
         """Dogs interaction"""
 
-        if self.isGood() and partner.isGood():
-            pass
-        if not partner.isGood() and not self.isGood() and randint(1, 100) > 45:
-            self.setMood('Good')
-            partner.setMood('Good')
-        if not partner.isGood() or not self.isGood() and randint(1, 100) > 55:
-            self.setMood('Bad')
-            partner.setMood('Bad')
+        for _ in range(number_of_dogs):
+            first_dog = self[randint(0, len(self.getList()) - 1)]
+            second_dog = self[randint(0, len(self.getList()) - 1)]
 
+            if first_dog.isGood() and second_dog.isGood():
+                pass
+            if not second_dog.isGood() and not first_dog.isGood() and randint(1, 100) > 45:
+                first_dog.setMood('Good')
+                second_dog.setMood('Good')
+            if not second_dog.isGood() or not first_dog.isGood() and randint(1, 100) > 55:
+                first_dog.setMood('Bad')
+                second_dog.setMood('Bad')
 
-    @staticmethod
-    def getRandomDog() -> list:
-        """Getter for random dog"""
-        return dogs[randint(0, len(dogs) - 1)]
-
-    @staticmethod
-    def printDogsMood():
-        """Printing gogs moods info"""
+    def printDogsMood(self):
+        """Printing dogs moods info"""
         count_good = 0
         count_bad = 0
 
-        for i in dogs:
-            if i.getMood() == 'Good':
+        for dog in self.getList():
+            if dog.getMood() == 'Good':
                 count_good += 1
             else:
                 count_bad += 1
@@ -67,14 +76,13 @@ class Dog:
             'Amount of sad dogs: {0} ({1}%)'.format(count_bad, round((count_bad * 100) / (count_good + count_bad), 2))
         )
 
-    @staticmethod
-    def getDogsMood() -> dict:
+    def getDogsMood(self) -> dict:
         """Getter for dogs mood"""
         count_good = 0
         count_bad = 0
 
-        for i in dogs:
-            if i.getMood() == 'Good':
+        for dog in self.getList():
+            if dog.getMood() == 'Good':
                 count_good += 1
             else:
                 count_bad += 1
@@ -82,6 +90,10 @@ class Dog:
             'Good': count_good,
             'Bad': count_bad
         }
+
+    def getRandomDog(self) -> Dog:
+        """Getter for random dog"""
+        return self.getList()[randint(0, len(dogs) - 1)]
 
 
 """Loading dogs names and ages"""
@@ -91,8 +103,8 @@ with open('names.txt', 'r') as names_file:
 with open('breeds.txt', 'r', encoding='utf-8') as breeds_file:
     breeds = [str(i)[:-1] for i in breeds_file]
 
-"""Creating tuple with random dogs"""
-Dog.dogs = [Dog(name, randint(1, 20)) for name in sample(names, len(names))]
-Dog.dogs = tuple(Dog.dogs)
-
 """Testing code"""
+
+dogs1 = DogsGroup(1000, names, breeds)
+
+dogs1.printDogsMood()
